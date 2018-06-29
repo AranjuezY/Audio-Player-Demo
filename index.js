@@ -30,7 +30,7 @@ const playlist = {
 	}
 }
 
-class Button1 extends React.Component{	
+class Button1 extends React.Component{
 	render(){
 		return(<button id="button1" onClick={this.props.onclick}>{this.props.value}</button>);
 	}
@@ -50,7 +50,7 @@ class Button3 extends React.Component{
 
 class Timebar extends React.Component{
 	render(){
-		return(<div></div>);
+		return(<div className="progress" style={{height:20, width:this.props.progress, backgroundColor:'Black'}}></div>);
 	}
 }
 	
@@ -67,7 +67,7 @@ class Player extends React.Component{
 	}
 	
 	updateState(){
-		
+		this.setState({currentTotalTime: playlist.result.tracks[this.state.currentTrackIndex].duration / 1000});
 	}
 	
 	playpause(){
@@ -116,10 +116,19 @@ class Player extends React.Component{
 				<Button2 onclick={()=>this.playnext()}/>
 				<Button3 onclick={()=>this.playprev()}/>
 				<div>{playlist.result.tracks[this.state.currentTrackIndex].name}</div>
-				<Timebar />
+				<Timebar progress={this.state.currentTime / this.state.currentTotalTime * 100 + '%'}/>
 				<audio id="audio" src={playlist.result.tracks[this.state.currentTrackIndex].mp3Url}></audio>
 			</div>
 		)
+	}
+	
+	componentDidMount(){
+		this.updateState();
+		setInterval(
+			()=>{
+				let audio = document.getElementById('audio');
+				this.setState({currentTime: audio.currentTime});
+			},1000)
 	}
 }
 
